@@ -30,7 +30,7 @@ public class Testing : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            grid.AddValue(UtilsClass.GetMouseWorldPosition(), 1);
+            grid.ReverseValue(UtilsClass.GetMouseWorldPosition());
         }
     }
 }

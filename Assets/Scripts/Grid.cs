@@ -18,7 +18,7 @@ public class Grid {
     private int height;
     private float cellsize;
     // the 2D array of the grid
-    private int[,] gridArray;
+    private bool[,] gridArray;  // true if there is a wall, false if not
     // array used to store values of each cell
     private TextMesh[,] debugTextArray;
     // tell where the grid positions should read from
@@ -31,7 +31,7 @@ public class Grid {
         this.width = width;
         this.height = height;
         this.cellsize = cellsize;
-        gridArray = new int[width, height];
+        gridArray = new bool[width, height];
         debugTextArray = new TextMesh[width, height];
         this.originPosition = originPosition;
 
@@ -89,7 +89,7 @@ public class Grid {
     }
 
     // set the value of a grid cell
-    public void SetValue(int x, int y, int value)
+    public void SetValue(int x, int y, bool value)
     {
         // if x or y are not valid, ignore this
         if (x >= 0 && y >= 0 && x < width && y < height)
@@ -100,7 +100,7 @@ public class Grid {
     }
 
     // overloading the SetValue function with a version for using the world position
-    public void SetValue(Vector3 worldPosition, int value)
+    public void SetValue(Vector3 worldPosition, bool value)
     {
         // get x and y and then set value normally
         int x, y;
@@ -108,8 +108,17 @@ public class Grid {
         SetValue(x, y, value);
     }
 
+    // just reverse the value
+    public void ReverseValue(Vector3 worldPosition)
+    {
+        // get x and y and then set value normally
+        int x, y;
+        GetXY(worldPosition, out x, out y);
+        SetValue(x, y, !GetValue(x, y));
+    }
+
     // get the value of a specific cell
-    public int GetValue(int x, int y)
+    public bool GetValue(int x, int y)
     {
         // if x or y are not valid, ignore this
         if (x >= 0 && y >= 0 && x < width && y < height)
@@ -118,31 +127,16 @@ public class Grid {
         } else
         {
             // otherwise, return -1
-            return -1;
+            return true;
         }
     }
 
     // overloading for world position version
-    public int GetValue(Vector3 worldPosition)
+    public bool GetValue(Vector3 worldPosition)
     {
         // get x and y and then get value normally
         int x, y;
         GetXY(worldPosition, out x, out y);
         return GetValue(x, y);
-    }
-
-    // add to the already set value
-    public void AddValue(int x, int y, int value)
-    {
-        SetValue(x, y, GetValue(x, y) + value);
-    }
-
-    // overloading for world position version
-    public void AddValue(Vector3 worldPosition, int value)
-    {
-        // get x and y and then add value normally
-        int x, y;
-        GetXY(worldPosition, out x, out y);
-        AddValue(x, y, value);
     }
 }
