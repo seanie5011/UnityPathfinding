@@ -1,9 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class Grid {
+    //
+    public event EventHandler<OnGridValueChangedEventArgs> OnGridValueChanged;
+    public class OnGridValueChangedEventArgs : EventArgs
+    {
+        public int x;
+        public int y;
+    }
+
     // properties of grid
     private int width;
     private int height;
@@ -42,10 +51,31 @@ public class Grid {
         // these lines to close off the grid
         Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
         Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
+
+        // 
+        OnGridValueChanged += (object sender, OnGridValueChangedEventArgs eventArgs) => {
+            debugTextArray[eventArgs.x, eventArgs.y].text = gridArray[eventArgs.x, eventArgs.y].ToString();
+        };
+    }
+
+    // getters
+    public int GetWidth()
+    {
+        return width;
+    }
+
+    public int GetHeight()
+    {
+        return height;
+    }
+
+    public float GetCellsize()
+    {
+        return cellsize;
     }
 
     // use cellsize to get world position (orthographic 2D)
-    private Vector3 GetWorldPosition(int x, int y)
+    public Vector3 GetWorldPosition(int x, int y)
     {
         return new Vector3(x, y) * cellsize + originPosition;
     }
@@ -65,7 +95,7 @@ public class Grid {
         if (x >= 0 && y >= 0 && x < width && y < height)
         {
             gridArray[x, y] = value;
-            debugTextArray[x, y].text = gridArray[x, y].ToString();
+            if (OnGridValueChanged != null) OnGridValueChanged(this, new OnGridValueChangedEventArgs { x = x, y = y });  // call the event
         }
     }
 
@@ -99,5 +129,20 @@ public class Grid {
         int x, y;
         GetXY(worldPosition, out x, out y);
         return GetValue(x, y);
+    }
+
+    // add to the already set value
+    public void AddValue(int x, int y, int value)
+    {
+        SetValue(x, y, GetValue(x, y) + value);
+    }
+
+    // overloading for world position version
+    public void AddValue(Vector3 worldPosition, int value)
+    {
+        // get x and y and then add value normally
+        int x, y;
+        GetXY(worldPosition, out x, out y);
+        AddValue(x, y, value);
     }
 }

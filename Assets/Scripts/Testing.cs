@@ -10,22 +10,27 @@ public class Testing : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        grid = new Grid(4, 4, 10f, new Vector3(-5, -3));
+        grid = new Grid(16, 9, 10f, new Vector3(-80f, -45f));
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        // set value of our grid based on where we left click
-        if (Input.GetMouseButtonDown(0))
-        {
-            grid.SetValue(UtilsClass.GetMouseWorldPosition(), 56);
-        }
+        // left click
+        HandleClickToModifyGrid();
 
-        // get value of our grid based on where we right click
+        // log value when right click
         if (Input.GetMouseButtonDown(1))
         {
             Debug.Log(grid.GetValue(UtilsClass.GetMouseWorldPosition()));
+        }
+    }
+
+    // add value when left click
+    private void HandleClickToModifyGrid()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            grid.AddValue(UtilsClass.GetMouseWorldPosition(), 1);
         }
     }
 }
